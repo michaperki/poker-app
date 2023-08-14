@@ -1,26 +1,49 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import * as React from "react";
+import { useState } from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Feed from "./Feed";
+import HandInputForm from "./HandInputForm";
+import HandViewer from "./HandViewer";
+import { Provider } from "react-redux"; // Import Provider from Redux
+import store from "./redux/store"; // Import your Redux store
 
-function App() {
+import { PokerHand } from "./types/types";
+
+const App: React.FC = () => {
+  const [pokerHands, setPokerHands] = useState<PokerHand[]>([]);
+
+  const addNewHand = (newHand: PokerHand) => {
+    setPokerHands((prevHands) => [...prevHands, newHand]);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <div>
+        <h1>Poker Hand Sharing App</h1>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <Feed pokerHands={pokerHands} setPokerHands={setPokerHands} />
+            }
+          />
+          <Route
+            path="/add-hand"
+            element={
+              <HandInputForm
+                setPokerHands={setPokerHands}
+                addNewHand={addNewHand}
+              />
+            } // Pass addNewHand
+          />
+          <Route
+            path="/hand/:id"
+            element={<HandViewer pokerHands={pokerHands} />}
+          />
+        </Routes>
+      </div>
+    </Router>
   );
-}
+};
 
 export default App;
